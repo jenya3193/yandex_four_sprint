@@ -7,8 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 
 @RunWith(Parameterized.class)
 public class OrderTest {
@@ -31,12 +29,10 @@ public class OrderTest {
 
     @Test
     public void checkQuestionAndAnswers() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--no-sandbox", "--disable-dev-shm-usage");
-        options.addArguments("--no-sandbox", "--disable-dev-shm-usage");
-        driver = new ChromeDriver(options);
-        driver.get("https://qa-scooter.praktikum-services.ru/");
 
+        driver = new ChromeDriverInitializer().initChromeDriver();
+
+        driver.get("https://qa-scooter.praktikum-services.ru/");
         SamokatMainPage objSamokatMainPage = new SamokatMainPage(driver);
         objSamokatMainPage.clickOnOrderButton(orderButton);
 

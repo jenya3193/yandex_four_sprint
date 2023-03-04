@@ -28,8 +28,16 @@ public class SamokatMainPage {
     // список внутренних тектовых элементов раздела «Вопросы о важном»
     private By questionListInnerItem = By.xpath("//div[@class = 'accordion__panel']/p");
 
+    // кнопка Принять куки
+    private By acceptCookiesButton = By.id("rcc-confirm-button");
+
+
     public SamokatMainPage(WebDriver driver){
         this.driver = driver;
+    }
+
+    public void clickAcceptCookiesButton() {
+        driver.findElement(acceptCookiesButton).click();
     }
 
     // метод клика по кнопке заказать
@@ -39,27 +47,24 @@ public class SamokatMainPage {
                 driver.findElement(navPanelOrderButton).click();
                 break;
             case "кнопка Заказать в блоке инстркукций":
+                clickAcceptCookiesButton();
                 new Actions(driver).scrollToElement(driver.findElement(roadMapOrderButton)).perform();
-                // скролл учитывая сообщение о куки
-                new Actions(driver).scrollByAmount(0,200).perform();
                 driver.findElement(roadMapOrderButton).click();
                 break;
         }
     }
 
     // метод проверки списка элементов раздела «Вопросы о важном»
-    public void assertQuestionListItems(List<String> expectedAnswers) {
+    public void assertQuestionListItems(String expectedAnswer, Integer questionNumber) {
         List<WebElement> questions = driver.findElements(questionListItem);
         List<WebElement> answers = driver.findElements(questionListInnerItem);
-        for (int i= 0; i < questions.size(); i++) {
-            new Actions(driver).scrollToElement(questions.get(i)).perform();
-            // скролл учитывая сообщение о куки
-            new Actions(driver).scrollByAmount(0,200).perform();
-            questions.get(i).click();
-            new WebDriverWait(driver, Duration.ofSeconds(3))
-                    .until(ExpectedConditions.visibilityOf(answers.get(i)));
-            MatcherAssert.assertThat(answers.get(i).getText(), is(expectedAnswers.get(i)));
-        }
+        int questionIndex = questionNumber - 1;
+        clickAcceptCookiesButton();
+        new Actions(driver).scrollToElement(questions.get(questionIndex)).perform();
+        questions.get(questionIndex).click();
+        new WebDriverWait(driver, Duration.ofSeconds(3))
+                .until(ExpectedConditions.visibilityOf(answers.get(questionIndex)));
+        MatcherAssert.assertThat(answers.get(questionIndex).getText(), is(expectedAnswer));
     }
 
 }
